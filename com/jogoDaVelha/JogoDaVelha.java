@@ -2,19 +2,25 @@ package com.jogoDaVelha;
 
 import com.valores.Valores;
 
-public class JogoDaVelha {
+public final class JogoDaVelha {
 
     private Valores test;                   // Recebe um valor do tipo enum(X ou O), para fazer a verificação de vitória, usado nos métodos vitoria1, vitoria2, vitoria3 e vitoria4
     private int iteracao;                   // Usado para saber se foi o X ou O(bola) que deve ser jodaga, veja a condição.
     private int posicao;                    // Armazena o valor da posição desejada a ser jogada, usado na estrutura de condição SWITCH
     private Valores[][] valores;
-    private int[] valoresJaArmazenados = new int[9];
+    private int[] valoresJaArmazenados;
 
-    public void setJogoDaVelha(Valores[][] valores, int iteracao, int posicao, int[] valoresJaArmazenados){
+    public void setJogoDaVelha(Valores[][] valores, int iteracao, int posicao, int[] valoresJaArmazenados) throws IllegalArgumentException
+    {
+
         this.setIteracao(iteracao);
         this.valores = valores;
-        this.setPosicao(posicao);
         this.valoresJaArmazenados = valoresJaArmazenados;
+
+        if (posicao < 1 || posicao > 9)
+            throw new IllegalArgumentException("jogada inválida.");
+
+        this.posicao = posicao;
     }
 
     public void setValores(Valores[][] valores) {
@@ -25,7 +31,8 @@ public class JogoDaVelha {
         return valores;
     }
 
-    public void setValoresJaArmazenados(int[] valoresJaArmazenados) {
+    public void setValoresJaArmazenados(int[] valoresJaArmazenados)
+    {
         this.valoresJaArmazenados = valoresJaArmazenados;
     }
 
@@ -41,7 +48,11 @@ public class JogoDaVelha {
         return iteracao;
     }
 
-    public void setPosicao(int posicao) {
+    public void setPosicao(int posicao) throws IllegalArgumentException
+    {
+        if (posicao < 1 && posicao > 9)
+            throw new IllegalArgumentException("a jogada nesta posição já foi feita.%n");
+
         this.posicao = posicao;
     }
 
@@ -88,18 +99,15 @@ public class JogoDaVelha {
         }
     }
 
-    public boolean verificandoJogada(){                                 //início do método
-        boolean jogada = false;
-        for (int i = 0; i < valoresJaArmazenados.length; i++) {         // Este for percorre um array de 9 iteração
-            if (getPosicao() == valoresJaArmazenados[i]) {              // compara a iteração inserida e se já estivar dentro do array ele não addiciona e quebra
-                jogada = true;                                          // se for verdade, adiciona true na variável "jogada"
-                break;                                                  // quebra o loop For retornando no final o seu valor
-            } else {                                                    // se não encontrar o valor
-                valoresJaArmazenados[i] = getPosicao();                 // adiciona no array "valoresJaArmazenado"
-            }
-        }
-        return jogada;                                                  // retona o valor depois do loop For
-    }                                                                   //fim do método
+    public boolean verificandoJogada() throws IllegalArgumentException
+    {
+        for(int i = 1; i < valoresJaArmazenados.length; i++)
+            if (getPosicao() == valoresJaArmazenados[i])
+                throw new IllegalArgumentException("a jogada já foi feita");
+
+        valoresJaArmazenados[getPosicao()] = getPosicao()  ;
+        return true;
+    }
 
     public int vitoria1(){                                      //início do método
         int vitoria = 0;
