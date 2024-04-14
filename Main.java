@@ -13,6 +13,7 @@ public class Main
         JogoDaVelha jogoDaVelha = new JogoDaVelha();
 
         int i = 0;
+        int posicao ;
         final int[] valoresArmazenados = new int[10];
         Valores[][] velha = {{Valores.EMPTY, Valores.EMPTY, Valores.EMPTY}, {Valores.EMPTY, Valores.EMPTY, Valores.EMPTY}, {Valores.EMPTY, Valores.EMPTY, Valores.EMPTY}};
        final Valores[] valores = {Valores.O, Valores.X};
@@ -21,11 +22,11 @@ public class Main
 
         while ( i  < valoresArmazenados.length -1) {
 
-            System.out.print("Inseri a posição: ");
-            int posicao = scanner.nextInt();
-
             try
             {
+                System.out.print("Inseri a posição: ");
+                posicao = scanner.nextInt();
+
                 jogoDaVelha.setJogoDaVelha(velha, i, posicao, valoresArmazenados);
 
                 if (jogoDaVelha.verificandoJogada()) {
@@ -48,19 +49,23 @@ public class Main
 
                 mostrandoTabela(velha);
 
-            } catch (IllegalArgumentException e){
-                System.out.printf("%nErro: %s%n%n", e.getMessage());
-            } catch (InputMismatchException inputMismatchException){
-                System.out.printf("%nErro: %s%n%n", inputMismatchException);
+            }
+            catch (InputMismatchException inputMismatchException)
+            {
                 scanner.nextLine();
+                System.out.printf("%nErro: você precisa inserir números inteiros de  1-9.%n%n");
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.printf("%nErro: %s%n%n", e.getMessage());
             }
         }
         scanner.close();
     }
 
     public static boolean verificandoVitoria(JogoDaVelha  jogoDaVelha, Valores[] valores){
-
-        for (Valores valore : valores) {
+        for (Valores valore : valores)
+        {
             jogoDaVelha.setTest(valore);
             if ((jogoDaVelha.vitoria1() == 3) || (jogoDaVelha.vitoria2() == 3) || (jogoDaVelha.vitoria3() == 3) || (jogoDaVelha.vitoria4() == 3)) {
                 return true;
@@ -69,8 +74,7 @@ public class Main
         return false;
     }
 
-    public static void mostrandoTabela(Valores[][] velha)
-    {
+    public static void mostrandoTabela(Valores[][] velha){
         System.out.println();
         for (int counter = 0; counter < 3; counter++) {
             for (int j = 0; j < 3; j++) {
