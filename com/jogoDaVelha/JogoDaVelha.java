@@ -4,23 +4,25 @@ import com.valores.Valores;
 
 public final class JogoDaVelha {
 
-    private Valores test;                   // Recebe um valor do tipo enum(X ou O), para fazer a verificação de vitória, usado nos métodos vitoria1, vitoria2, vitoria3 e vitoria4
-    private int iteracao;                   // Usado para saber se foi o X ou O(bola) que deve ser jodaga, veja a condição.
-    private int posicao;                    // Armazena o valor da posição desejada a ser jogada, usado na estrutura de condição SWITCH
+    private Valores test;
+    private int iteracao;
+    private int posicao;
     private Valores[][] valores;
     private int[] valoresJaArmazenados;
 
-    public void setJogoDaVelha(Valores[][] valores, int iteracao, int posicao, int[] valoresJaArmazenados) throws IllegalArgumentException
-    {
+    public JogoDaVelha() {
+        this.test = Valores.X;
+        this.iteracao = 0;
+        this.posicao = 0;
+        this.valores = new Valores[3][3];
+        this.valoresJaArmazenados = new int[9];
+    }
 
-        this.setIteracao(iteracao);
+    public void setJogoDaVelha(Valores[][] valores, int iteracao, int posicao, int[] valoresJaArmazenados) {
         this.valores = valores;
-        this.valoresJaArmazenados = valoresJaArmazenados;
-
-        if (posicao < 1 || posicao > 9)
-            throw new IllegalArgumentException("jogada inválida.");
-
+        this.iteracao = iteracao;
         this.posicao = posicao;
+        this.valoresJaArmazenados = valoresJaArmazenados;
     }
 
     public void setValores(Valores[][] valores) {
@@ -31,8 +33,7 @@ public final class JogoDaVelha {
         return valores;
     }
 
-    public void setValoresJaArmazenados(int[] valoresJaArmazenados)
-    {
+    public void setValoresJaArmazenados(int[] valoresJaArmazenados) {
         this.valoresJaArmazenados = valoresJaArmazenados;
     }
 
@@ -48,11 +49,7 @@ public final class JogoDaVelha {
         return iteracao;
     }
 
-    public void setPosicao(int posicao) throws IllegalArgumentException
-    {
-        if (posicao < 1 && posicao > 9)
-            throw new IllegalArgumentException("a jogada nesta posição já foi feita.%n");
-
+    public void setPosicao(int posicao) {
         this.posicao = posicao;
     }
 
@@ -68,90 +65,84 @@ public final class JogoDaVelha {
         return test;
     }
 
-    public void Escolha(){
-
+    public void escolherJogada() {
         Valores valor;
 
-        if (iteracao % 2 == 0)          // Se o valor da iteração a dividir por 2 resultar em 0(usando o operador de resto)
-            valor = Valores.X;          // então o valor recebe X
-        else                            // Se não
-            valor = Valores.O;          // valor recebe O(bola)
-
-        switch (posicao) {                              // Esse SWITCH recebe o valor da posição, e vai adicionando
-            case 1:                                     // nessa posição do array principal o valor recebido
-                valores[0][0] = valor;  break;
-            case 2:
-                valores[0][1] = valor;  break;
-            case 3:
-                valores[0][2] = valor;  break;
-            case 4:
-                valores[1][0] = valor;  break;
-            case 5:
-                valores[1][1] = valor;  break;
-            case 6:
-                valores[1][2] = valor;  break;
-            case 7:
-                valores[2][0] = valor;  break;
-            case 8:
-                valores[2][1] = valor;  break;
-            case 9:
-                valores[2][2] = valor;  break;
+        if (iteracao % 2 == 0) {
+            valor = Valores.X;
+        } else {
+            valor = Valores.O;
         }
+
+        switch (posicao) {
+            case 1:
+                valores[0][0] = valor;
+                break;
+            case 2:
+                valores[0][1] = valor;
+                break;
+            case 3:
+                valores[0][2] = valor;
+                break;
+            case 4:
+                valores[1][0] = valor;
+                break;
+            case 5:
+                valores[1][1] = valor;
+                break;
+            case 6:
+                valores[1][2] = valor;
+                break;
+            case 7:
+                valores[2][0] = valor;
+                break;
+            case 8:
+                valores[2][1] = valor;
+                break;
+            case 9:
+                valores[2][2] = valor;
+                break;
+        }
+
+        iteracao++;
     }
 
-    public boolean verificandoJogada() throws IllegalArgumentException
-    {
-        for(int i = 1; i < valoresJaArmazenados.length; i++)
-            if (getPosicao() == valoresJaArmazenados[i])
-                throw new IllegalArgumentException("a jogada já foi feita");
+    public boolean verificarJogada() {
+        for (int i = 1; i < valoresJaArmazenados.length; i++) {
+            if (getPosicao() == valoresJaArmazenados[i]) {
+                throw new IllegalArgumentException("A jogada nesta posição já foi feita.");
+            }
+        }
 
-        valoresJaArmazenados[getPosicao()] = getPosicao()  ;
+        valoresJaArmazenados[getPosicao()] = getPosicao();
         return true;
     }
 
-    public int vitoria1(){                                      //início do método
+    public boolean verificarVitoria() {
+        return verificarVitoriaHorizontal() || verificarVitoriaVertical() || verificarVitoriaDiagonalPrincipal() || verificarVitoriaDiagonalSecundaria();
+    }
+
+    private boolean verificarVitoriaHorizontal() {
         int vitoria = 0;
-        for (int i = 0; i < 3; i++) {                           // Este método faz a verificação de todas as linhas horizontais
-            for (int j = 0; j < 3; j++) {                       // começando da iteração 0 até 2. O i está para representar a linha
-                if (valores[i][j] == getTest())                 // e o j para representar a coluna; isso quer dizer que a verificação será feita por coluna
-                    vitoria++;                                  // enquanto a linha matem o seu valor até que tudo sejá verificado
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (valores[i][j] == getTest()) {
+                    vitoria++;
+                }
             }
-            if (vitoria == 3)                                   // Se ao sair do segundo for o valor de vitoria for 3
-                break;                                          // o loop é quebrado, isso significa que houve uma vitoria
+
+            if (vitoria == 3) {
+                return true;
+            }
+
             vitoria = 0;
         }
-        return vitoria;
-    }                                                          //fim do método
-    public int vitoria2(){                                     //início do método
-        int vitoria = 0;
-        for (int i = 0; i < 3; i++) {                          // Este método faz a verificação de todas as linhas verticais
-            for (int j = 0; j < 3; j++) {                      // começando da iteração 0 até 2. O i está para representar a coluna
-                if (valores[j][i] == getTest())                // e o j para representar a linha; isso quer dizer que a verificação será feita por linha
-                    vitoria++;                                 // enquanto a coluna matem o seu valor até que tudo sejá verificado
-            }
-            if (vitoria == 3)                                  // Se ao sair do segundo for o valor de vitoria for 3
-                break;                                         // o loop é quebrado, isso significa que houve uma vitoria
-            vitoria = 0;
-        }
-        return vitoria;
-    }                                                         //fim do método
 
-    public int vitoria3(){                                    // início do método
-        int vitoria = 0;
-        for (int i = 0; i < 3; i ++) {                        // Este método testa os valores da diagonal
-                if (valores[i][i] == getTest())               // principal, com X ou O, dependendo do que
-                    vitoria++;                                // for passado com jogada
-        }
-        return vitoria;
-    }                                                         // fim do método
+        return false;
+    }
 
-    public int vitoria4(){                                    //início do método
+    private boolean verificarVitoriaVertical() {
         int vitoria = 0;
-        for (int i = 0, j = 2; i < 3;j--, i++) {              // Este método testa os valores da diagonal
-             if (valores[i][j] == getTest())                  // secundaria, com X ou O, dependendo do que
-                    vitoria++;                                // for passado com jogada
-        }
-        return vitoria;
-    }                                                          // fim do método
-}
-
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (
